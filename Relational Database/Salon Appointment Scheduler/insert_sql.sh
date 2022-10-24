@@ -9,4 +9,4 @@ $PSQL "create table customers(customer_id serial primary key, phone varchar uniq
 $PSQL "create table services(service_id serial primary key, name varchar)"
 $PSQL "create table appointments(appointment_id serial primary key, customer_id int references customers(customer_id), service_id int references services(service_id), time varchar)"
 
-$PSQL "insert into services(name) values('haircut') ,('massage') ,('color') ,('style')"
+$PSQL "insert into services(name) values('cut') ,('color') ,('perm') ,('style'), ('trim')"
