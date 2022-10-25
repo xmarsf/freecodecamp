@@ -8,6 +8,8 @@ git_commit() {
 
 cd ~/project
 mkdir periodic_table
+cd periodic_table
+touch element.sh
 git init
 git checkout -b main
 

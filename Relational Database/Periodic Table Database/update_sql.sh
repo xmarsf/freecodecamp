@@ -41,4 +41,3 @@ $PSQL "insert into properties (atomic_number, type, atomic_mass, melting_point_c
 $PSQL "alter table properties drop column type;"
 $PSQL "delete from properties where atomic_number=1000;"
 $PSQL "delete from elements where atomic_number=1000;"
-
