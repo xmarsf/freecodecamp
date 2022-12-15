@@ -33,7 +33,7 @@ app.get("/api/:date?", function (req, res) {
     if (!/\D+/.test(date)) {
         date = parseInt(date);
     }
-    if (!new Date(date).getDay()) {
+    if (!new Date(date).getFullYear()) {
         res.json({
             error: "Invalid Date",
         });
