@@ -24,8 +24,11 @@ app.get("/api/hello", function (req, res) {
     res.json({ greeting: "hello API" });
 });
 
-app.get("/api/:date", function (req, res) {
+app.get("/api/:date?", function (req, res) {
     let date = req.params.date;
+    if (!date) {
+        date = new Date();
+    }
     // miliseconds date contains only digit character
     if (!/\D+/.test(date)) {
         date = parseInt(date);
@@ -37,7 +40,7 @@ app.get("/api/:date", function (req, res) {
     } else {
         res.json({
             unix: +new Date(date),
-            utc: new Date(date).toString(),
+            utc: new Date(date).toUTCString(),
         });
     }
 });
