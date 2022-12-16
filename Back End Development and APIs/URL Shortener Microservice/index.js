@@ -36,7 +36,7 @@ let urlShortenerSchema = new mongoose.Schema({
         unique: true,
     },
     short_url: {
-        type: String,
+        type: Number,
         required: true,
         unique: true,
     },
@@ -132,8 +132,12 @@ app.get("/api/shorturl/:id?", async function (req, res) {
     if (!id) {
         res.send("Not Found");
     } else {
-        let original_url = await getOriginalURL(id);
-        res.redirect(original_url);
+        try {
+            let original_url = await getOriginalURL(id);
+            res.redirect(original_url);
+        } catch (err) {
+            res.send("Not Found");
+        }
     }
 });
 
