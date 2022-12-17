@@ -36,10 +36,6 @@ let exerciseSchema = new mongoose.Schema({
     date: String,
 });
 
-let logSchema = new mongoose.Schema({
-    username: String,
-});
-
 let User = mongoose.model("User", userSchema);
 let Exercise = mongoose.model("Exercise", exerciseSchema);
 
@@ -72,6 +68,59 @@ app.get("/api/users", async function (req, res) {
     } catch (err) {
         console.log(err);
         res.send([]);
+    }
+});
+
+app.post("/api/users/:_id/exercises", async function (req, res) {
+    try {
+        let userId = req.params._id;
+        let { description, duration, date } = req.body;
+        duration = parseInt(duration);
+        date = date ? new Date(date) : new Date();
+        let user = await User.findById(userId).exec();
+        let exercise = new Exercise({ username: user.username, description, duration, date });
+        exercise = await exercise.save();
+        res.json({
+            username: user.username,
+            _id: user._id,
+            description,
+            duration,
+            date: date.toDateString(),
+        });
+    } catch (err) {
+        res.json({ err });
+    }
+});
+
+app.get("/api/users/:_id/logs", async function (req, res) {
+    try {
+        let userId = req.params._id;
+        let { from, to, limit } = req.query;
+        let user = await User.findById(userId).exec();
+        let exercises;
+        if (from && to && limit) {
+            exercises = await Exercise.find({ username: user.username, date: { $gte: from, $lte: to } })
+                .limit(parseInt(limit))
+                .exec();
+        } else {
+            exercises = await Exercise.find({ username: user.username }).exec();
+        }
+        exercises = exercises.map((exc) => {
+            return {
+                description: exc.description,
+                duration: exc.duration,
+                date: new Date(exc.date).toDateString(),
+            };
+        });
+        let totalExercises = exercises.length;
+        res.json({
+            username: user.username,
+            count: totalExercises,
+            _id: userId,
+            log: exercises,
+        });
+    } catch (err) {
+        res.json({ err });
     }
 });
 
