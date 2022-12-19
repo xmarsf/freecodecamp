@@ -4,6 +4,9 @@ const cors = require("cors");
 
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const moment = require("moment");
+
+const FORMAT_DATE = "YYYY-MM-DD";
 
 require("dotenv").config();
 
@@ -78,7 +81,7 @@ app.post("/api/users/:_id/exercises", async function (req, res) {
         duration = parseInt(duration);
         date = date ? new Date(date) : new Date();
         let user = await User.findById(userId).exec();
-        let exercise = new Exercise({ username: user.username, description, duration, date });
+        let exercise = new Exercise({ username: user.username, description, duration, date: moment(date).format(FORMAT_DATE) });
         exercise = await exercise.save();
         res.json({
             username: user.username,
@@ -98,12 +101,16 @@ app.get("/api/users/:_id/logs", async function (req, res) {
         let { from, to, limit } = req.query;
         let user = await User.findById(userId).exec();
         let exercises;
-        if (from && to && limit) {
-            exercises = await Exercise.find({ username: user.username, date: { $gte: from, $lte: to } })
-                .limit(parseInt(limit))
-                .exec();
+        if (from && to) {
+            exercises = Exercise.find({ username: user.username, date: { $gte: from, $lte: to } });
         } else {
-            exercises = await Exercise.find({ username: user.username }).exec();
+            exercises = Exercise.find({ username: user.username });
+        }
+        if (limit) {
+            limit = parseInt(limit);
+            exercises = await exercises.limit(limit).exec();
+        } else {
+            exercises = await exercises.exec();
         }
         exercises = exercises.map((exc) => {
             return {
