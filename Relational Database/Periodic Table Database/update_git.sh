@@ -28,4 +28,3 @@ git_commit "refactor: 4th commit"
 
 rm test.txt
 git_commit "chore: 5th commit"
-
